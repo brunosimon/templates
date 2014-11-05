@@ -17,11 +17,25 @@
             this._super(options);
 
             this.page    = null;
-            this.browser = new APP.TOOLS.Browser();
+            this.ticker  = new APP.TOOLS.Ticker();
+            this.browser = new APP.TOOLS.Browser({initial_triggers:['resize']});
             this.css     = new APP.TOOLS.Css();
             this.header  = new APP.COMPONENTS.Header();
 
-            this.init_events();
+            this.browser.on('resize',function(width,height)
+            {
+                console.log('resize : ' + width + ' x ' + height);
+            });
+
+            this.browser.on('scroll',function(direction,top,left)
+            {
+                console.log('scroll : ' + top + ' x ' + left);
+            });
+
+            this.browser.on('mouse_move',function(mouse)
+            {
+                console.log('mouse_move : ' + mouse.x + ' : ' + mouse.y);
+            });
         },
 
         /**
@@ -32,27 +46,7 @@
             var that = this;
 
             this.browser.start();
-
-            window.setTimeout(function()
-            {
-                that.browser.trigger('resize');
-            },300);
-        },
-
-        /**
-         * INIT EVENTS
-         */
-        init_events: function()
-        {
-            var that = this;
-        },
-
-        /**
-         * FRAME
-         */
-        frame: function()
-        {
-            this.browser.frame();
+            this.ticker.start();
         }
     });
 })(window);

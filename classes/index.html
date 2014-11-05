@@ -24,18 +24,11 @@
     <script src="src/js/app/tools/browser.class.js"></script>
     <script src="src/js/app/tools/css.class.js"></script>
     <script src="src/js/app/tools/images.class.js"></script>
+    <script src="src/js/app/tools/ticker.class.js"></script>
 
     <script>
         var app = new APP.CORE.App();
         app.start();
-
-        var loop = function()
-        {
-            window.requestAnimationFrame(loop);
-            app.frame();
-        };
-        loop();
-
     </script>
 </body>
 </html>

@@ -17,6 +17,7 @@
             this._super(options);
 
             this.page    = null;
+            this.ticker  = new APP.TOOLS.Ticker();
             this.browser = new APP.TOOLS.Browser();
             this.css     = new APP.TOOLS.Css();
             this.scroll  = new APP.TOOLS.Scroll();
@@ -40,12 +41,7 @@
         start: function()
         {
             this.browser.start();
-
-            var that = this;
-            window.setTimeout(function()
-            {
-                that.browser.trigger('resize');
-            },300);
+            this.ticker.start();
         },
 
         /**
@@ -207,14 +203,6 @@
                 // Start
                 this.page.start();
             }
-        },
-
-        /**
-         * FRAME
-         */
-        frame: function()
-        {
-            this.browser.frame();
         }
     });
 })(window);

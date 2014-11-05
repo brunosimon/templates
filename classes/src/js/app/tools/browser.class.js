@@ -6,6 +6,8 @@
     {
         options:
         {
+            initial_triggers       : [],
+            initial_triggers_delay : 0,
             disable_hover_on_scroll : false,
             disable_hover_on_scroll_duration : 300,
             add_classes_to :
@@ -52,11 +54,12 @@
             this.is            = null;
             this.version       = null;
             this.mobile        = this.mobile_detection();
-            this.window        = $(window);
-            this.width         = this.window.width();
-            this.height        = this.window.height();
+            this.$window       = $(window);
+            this.width         = this.$window.width();
+            this.height        = this.$window.height();
             this.retina        = window.devicePixelRatio > 1;
             this.shall_trigger = [];
+            this.ticker        = new APP.TOOLS.Ticker();
 
             this.set_browser();
             this.set_browser_version();
@@ -82,14 +85,39 @@
          */
         start: function()
         {
-            if(this.listening_to.scroll)
-                this.window.trigger('scroll');
+            var that = this;
 
-            if(this.listening_to.resize)
-                this.window.trigger('resize');
+            // triggers function
+            var initial_triggers = function()
+            {
+                // Initial triggers
+                if(that.options.initial_triggers.length)
+                {
+                    for(var i = 0; i < that.options.initial_triggers.length; i++)
+                    {
+                        switch(that.options.initial_triggers[i])
+                        {
+                            case 'scroll':
+                                that.$window.trigger('scroll');
+                                break;
+                            case 'resize':
+                                that.$window.trigger('resize');
+                                break;
+                            case 'mouse_move':
+                                $(that.is.IE ? window.document : window).trigger('mousemove');
+                                break;
+                        }
+                    }
+                }
+            };
 
-            if(this.listening_to.mouse_move)
-                $(this.is.IE ? window.document : window).trigger('mousemove');
+            // Use delay
+            if(this.options.initial_triggers_delay)
+                window.setTimeout(initial_triggers,this.options.initial_triggers_delay);
+
+            // Or not
+            else
+                initial_triggers();
         },
 
         /**
@@ -226,10 +254,16 @@
         {
             var that = this;
 
+            // Ticks
+            this.ticker.on('tick',function()
+            {
+                that.frame();
+            });
+
             // Scroll
             if(this.listening_to.scroll)
             {
-                this.window.on('scroll touchmove',function(e)
+                this.$window.on('scroll touchmove',function(e)
                 {
                     // e = e || window.event;
                     // if (e.preventDefault)
@@ -251,19 +285,19 @@
                         that.left        = window.pageXOffset;
                     }
 
-                    that.shall_trigger.push('scroll');
+                    that.shall_trigger.scroll = [that.direction,that.top,that.left];
                 });
             }
 
             // Resize
             if(this.listening_to.resize)
             {
-                this.window.on('resize',function(e)
+                this.$window.on('resize',function(e)
                 {
                     that.width  = window.innerWidth;
                     that.height = window.innerHeight;
 
-                    that.shall_trigger.push('resize');
+                    that.shall_trigger.resize = [that.width,that.height];
                 });
             }
 
@@ -281,7 +315,7 @@
                         that.mouse.ratio.y = that.mouse.y / that.height;
                     }
 
-                    that.shall_trigger.push('mousemove');
+                    that.shall_trigger.mousemove = [that.mouse];
                 });
             }
         },
@@ -299,13 +333,19 @@
          */
         frame: function()
         {
-            for(var i = 0; i < this.shall_trigger.length; i++)
-            {
-                this.trigger(this.shall_trigger[i]);
-            }
+            var keys = Object.keys(this.shall_trigger);
 
-            if(this.shall_trigger.length)
-                this.shall_trigger = [];
+            if(keys.length)
+            {
+                for(var i = 0; i < keys.length; i++)
+                {
+                    var key = keys[i];
+                    this.trigger(key,this.shall_trigger[key]);
+                }
+
+                if(keys.length)
+                    this.shall_trigger = [];
+            }
         }
     });
 })(window);
