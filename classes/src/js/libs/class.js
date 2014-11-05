@@ -11,7 +11,7 @@
     {
         var c = null;
 
-        if(!object || typeof (object) !== 'object' || (typeof HTMLElement !== 'undefined' && object instanceof HTMLElement) || object instanceof Class)
+        if(!object || typeof (object) !== 'object' || (typeof HTMLElement !== 'undefined' && object instanceof HTMLElement) || object instanceof Class || (typeof THREE !== 'undefined' && object instanceof THREE.Object3D) || (typeof jQuery !== 'undefined' && object instanceof jQuery))
         {
             return object;
         }
@@ -42,7 +42,7 @@
           for(var key in extended)
           {
               var ext = extended[key];
-              if(typeof (ext) !== 'object' || ext instanceof HTMLElement || ext instanceof Class)
+              if(typeof (ext) !== 'object' || ext instanceof HTMLElement || ext instanceof Class || (typeof THREE !== 'undefined' && ext instanceof THREE.Object3D) || (typeof ext !== 'undefined' && ext instanceof jQuery))
               {
                   original[key] = ext;
               }
