@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Template - Classes</title>
+</head>
+<body>
+    <!-- LIBS -->
+    <script src="src/js/libs/jquery-2.1.1.min.js"></script>
+    <script src="src/js/libs/class.js"></script>
+
+    <!-- APP -->
+    <script src="src/js/app/app.js"></script>
+
+    <!-- CORE -->
+    <script src="src/js/app/core/abstract.class.js"></script>
+    <script src="src/js/app/core/event_emitter.class.js"></script>
+    <script src="src/js/app/core/app.class.js"></script>
+
+    <!-- COMPONENTS -->
+    <script src="src/js/app/components/header.class.js"></script>
+
+    <!-- TOOLS -->
+    <script src="src/js/app/tools/browser.class.js"></script>
+    <script src="src/js/app/tools/css.class.js"></script>
+    <script src="src/js/app/tools/images.class.js"></script>
+
+    <script>
+        var app = new APP.CORE.App();
+        app.start();
+
+        var loop = function()
+        {
+            window.requestAnimationFrame(loop);
+            app.frame();
+        };
+        loop();
+
+    </script>
+</body>
+</html>

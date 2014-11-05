@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Template - Three.js</title>
+    <style>
+        html,body {margin:0;padding:0;background:#000;}
+        canvas {display:block;}
+    </style>
+</head>
+<body>
+    <canvas id="three-canvas"></canvas>
+    <script src="http://threejs.org/build/three.min.js"></script>
+    <script>
+
+        /* INIT THREE */
+        var scene    = new THREE.Scene(),
+            camera   = new THREE.PerspectiveCamera(85,window.innerWidth/window.innerHeight,0.1,1000),
+            center   = new THREE.Vector3(),
+            canvas   = document.getElementById('three-canvas'),
+            renderer = new THREE.WebGLRenderer({canvas:canvas,alpha:true});
+
+        renderer.setClearColor(0x000000,0);
+        renderer.setSize(window.innerWidth,window.innerHeight);
+        camera.position.y = 0.2;
+        camera.position.z = 3;
+
+        /* DUMMY */
+        function init_dummy()
+        {
+            var material = new THREE.MeshNormalMaterial(),
+                geometry = new THREE.BoxGeometry(1,1,1),
+                mesh     = new THREE.Mesh(geometry,material);
+
+            scene.add(mesh);
+        }
+        init_dummy();
+
+        /* RESIZE */
+        var win = {width:window.innerWidth,height:window.innerHeight};
+        window.onresize = function()
+        {
+            win.width  = window.innerWidth;
+            win.height = window.innerHeight;
+
+            canvas.width  = win.width;
+            canvas.height = win.height;
+            camera.aspect = win.width / win.height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(win.width,win.height);
+        };
+
+        /* MOUSE MOVE */
+        var mouse = {x:0,y:0,ratio:{x:0,y:0}};
+        window.onmousemove = function(e)
+        {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+
+            mouse.ratio.x = mouse.x / win.width;
+            mouse.ratio.y = mouse.y / win.height;
+        };
+
+        /* FRAMES */
+        function loop()
+        {
+            window.requestAnimationFrame(loop);
+
+            camera.position.x = (mouse.ratio.x - 0.5) * 4;
+            camera.position.y = - (mouse.ratio.y - 0.5) * 4;
+            camera.lookAt(center);
+
+            renderer.render(scene,camera);
+        }
+
+        loop();
+    </script>
+</body>
+</html>
