@@ -1,4 +1,4 @@
-(function(window)
+(function()
 {
     "use strict";
 
@@ -54,7 +54,7 @@
             this.is            = null;
             this.version       = null;
             this.mobile        = this.mobile_detection();
-            this.$window       = $(window);
+            this.$window       = $();
             this.width         = this.$window.width();
             this.height        = this.$window.height();
             this.retina        = window.devicePixelRatio > 1;
@@ -348,4 +348,4 @@
             }
         }
     });
-})(window);
+})();

@@ -1,4 +1,4 @@
-(function(window)
+(function()
 {
     "use strict";
 
@@ -60,4 +60,4 @@
             this.browser.off('resize.home');
         }
     });
-})(window);
+})();

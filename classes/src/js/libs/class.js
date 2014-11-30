@@ -3,7 +3,7 @@
 //  * MIT Licensed.
 //  */
 // // Inspired by base2 and Prototype
-(function (window)
+(function ()
 {
     "use strict";
 
@@ -148,4 +148,4 @@
         Class.inject                = inject;
         return Class;
     };
-})(window);
+})();

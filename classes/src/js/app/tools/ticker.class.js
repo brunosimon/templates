@@ -1,4 +1,4 @@
-(function(window)
+(function()
 {
     "use strict";
 
@@ -9,7 +9,7 @@
          */
         staticInstantiate:function()
         {
-            if(APP.TOOLS.Ticker.prototype.instance === null)
+            if( APP.TOOLS.Ticker.prototype.instance === null )
                 return null;
             else
                 return APP.TOOLS.Ticker.prototype.instance;
@@ -18,15 +18,15 @@
         /**
          * INIT
          */
-        init: function(options)
+        init: function( options )
         {
             this._super(options);
 
+            this.started      = false;
             this.running      = false;
             this.start_time   = 0;
             this.time         = 0;
             this.elapsed_time = 0;
-
 
             APP.TOOLS.Ticker.prototype.instance = this;
         },
@@ -38,17 +38,26 @@
         {
             var that = this;
 
-            this.start_time   = + (new Date());
+            this.started      = true;
+            this.start_time   = + ( new Date() );
             this.time         = 0;
             this.elapsed_time = 0;
-            this.running      = true;
+        },
+
+        /**
+         * RUN
+         */
+        run: function()
+        {
+            var that     = this;
+            this.running = true;
 
             var loop = function()
             {
                 if(that.running)
-                    window.requestAnimationFrame(loop);
+                    window.requestAnimationFrame( loop );
 
-                that.trigger('tick',[that.elapsed_time,that.time,that.start_time]);
+                that.tick();
             };
 
             loop();
@@ -60,6 +69,21 @@
         stop: function()
         {
             this.running = false;
+        },
+
+        /**
+         * TICK
+         */
+        tick: function()
+        {
+            if(!this.started)
+                this.start();
+
+            this.time         = + ( new Date() );
+            this.delta        = this.time - this.start_time - this.elapsed_time;
+            this.elapsed_time = this.time - this.start_time;
+
+            this.trigger( 'tick', [ this.elapsed_time, this.time, this.start_time ] );
         }
     });
-})(window);
+})();

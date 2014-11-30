@@ -1,4 +1,4 @@
-(function(window)
+(function()
 {
     'use strict';
 
@@ -49,4 +49,4 @@
             this.ticker.start();
         }
     });
-})(window);
+})();

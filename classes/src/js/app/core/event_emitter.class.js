@@ -1,4 +1,4 @@
-(function(window)
+(function()
 {
     'use strict';
 
@@ -229,4 +229,4 @@
             return new_name;
         }
     });
-})(window);
+})();

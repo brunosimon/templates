@@ -1,4 +1,4 @@
-(function(window)
+(function()
 {
     "use strict";
 
@@ -11,4 +11,4 @@
             this.name = 'default';
         }
     });
-})(window);
+})();

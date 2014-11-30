@@ -1,4 +1,4 @@
-(function(window)
+(function()
 {
     "use strict";
 
@@ -69,4 +69,4 @@
             return text.charAt(0).toUpperCase() + text.slice(1);
         }
     });
-})(window);
+})();

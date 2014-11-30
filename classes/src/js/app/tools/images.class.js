@@ -1,4 +1,4 @@
-(function(window)
+(function()
 {
     "use strict";
 
@@ -226,4 +226,4 @@
             return proportions;
         }
     });
-})(window);
+})();
