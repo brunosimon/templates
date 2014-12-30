@@ -28,6 +28,14 @@
         },
 
         /**
+         * IGNITE DAT FIRE!
+         */
+        ignite: function()
+        {
+            return this.start();
+        },
+
+        /**
          * DESTROY
          */
         destroy: function()
