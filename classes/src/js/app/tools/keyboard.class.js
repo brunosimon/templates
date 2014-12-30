@@ -48,22 +48,69 @@
             // Down
             window.onkeydown = function( e )
             {
-                var character = String.fromCharCode(e.keyCode).toLowerCase();
-                that.shall_trigger.down = character;
+                var character = that.keycode_to_character( e.keyCode );
 
                 if( that.downs.indexOf( character ) === -1 )
                     that.downs.push( character );
+
+                that.shall_trigger.down = character;
             };
 
             // Up
             window.onkeyup = function( e )
             {
-                var character = String.fromCharCode(e.keyCode).toLowerCase();
-                that.shall_trigger.up = character;
+                var character = that.keycode_to_character( e.keyCode );
 
                 if( that.downs.indexOf( character ) !== -1 )
                     that.downs.splice( that.downs.indexOf( character ), 1 );
+
+                that.shall_trigger.up = character;
             };
+        },
+
+        /**
+         * KEYCODE TO CHAR
+         */
+        keycode_to_character: function( keycode )
+        {
+            var character = null;
+
+            switch( keycode )
+            {
+                // CMD
+                case 91 :
+                    character = 'cmd';
+                    break;
+
+                // CTRL
+                case 17 :
+                    character = 'ctrl';
+                    break;
+
+                // Default
+                default :
+                    character = String.fromCharCode( keycode ).toLowerCase();
+                    break;
+            }
+
+            return character;
+        },
+
+        /**
+         * ARE DOWN
+         */
+        are_down: function( keys )
+        {
+            var down = !!keys.length;
+
+            for( var i = 0; i < keys.length; i++ )
+            {
+                // console.log(this.downs.indexOf( keys[ i ] ));
+                if( this.downs.indexOf( keys[ i ] ) === -1 )
+                    down = false;
+            }
+
+            return down;
         },
 
         /**
