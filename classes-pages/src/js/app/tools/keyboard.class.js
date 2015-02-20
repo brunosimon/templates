@@ -53,7 +53,7 @@
                 if( that.downs.indexOf( character ) === -1 )
                     that.downs.push( character );
 
-                that.shall_trigger.down = character;
+                that.shall_trigger.down = [ e.keyCode, character ];
             };
 
             // Up
@@ -64,7 +64,7 @@
                 if( that.downs.indexOf( character ) !== -1 )
                     that.downs.splice( that.downs.indexOf( character ), 1 );
 
-                that.shall_trigger.up = character;
+                that.shall_trigger.up = [ e.keyCode, character ];
             };
         },
 
@@ -120,7 +120,7 @@
         {
             var keys = Object.keys(this.shall_trigger);
             for( var i = 0; i < keys.length; i++ )
-                this.trigger( keys[ i ] , [ this.shall_trigger[ keys[ i ]  ] ] );
+                this.trigger( keys[ i ], this.shall_trigger[ keys[ i ] ] );
 
             if( keys.length )
                 this.shall_trigger = {};

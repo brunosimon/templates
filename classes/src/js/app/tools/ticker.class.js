@@ -2,23 +2,23 @@
 {
     "use strict";
 
-    APP.TOOLS.Ticker = APP.CORE.Event_Emitter.extend(
+    App.Tools.Ticker = App.Core.Event_Emitter.extend(
     {
         /**
          * SINGLETON
          */
-        staticInstantiate:function()
+        staticInstantiate : function()
         {
-            if( APP.TOOLS.Ticker.prototype.instance === null )
+            if( App.Tools.Ticker.prototype.instance === null )
                 return null;
             else
-                return APP.TOOLS.Ticker.prototype.instance;
+                return App.Tools.Ticker.prototype.instance;
         },
 
         /**
          * INIT
          */
-        init: function( options )
+        init : function( options )
         {
             this._super(options);
 
@@ -28,13 +28,13 @@
             this.time         = 0;
             this.elapsed_time = 0;
 
-            APP.TOOLS.Ticker.prototype.instance = this;
+            App.Tools.Ticker.prototype.instance = this;
         },
 
         /**
          * START
          */
-        start: function()
+        start : function(auto_run)
         {
             var that = this;
 
@@ -42,12 +42,15 @@
             this.start_time   = + ( new Date() );
             this.time         = 0;
             this.elapsed_time = 0;
+
+            if(auto_run)
+                this.run();
         },
 
         /**
          * RUN
          */
-        run: function()
+        run : function()
         {
             var that     = this;
             this.running = true;
@@ -66,7 +69,7 @@
         /**
          * STOP
          */
-        stop: function()
+        stop : function()
         {
             this.running = false;
         },
@@ -74,7 +77,7 @@
         /**
          * TICK
          */
-        tick: function()
+        tick : function()
         {
             if(!this.started)
                 this.start();

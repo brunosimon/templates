@@ -2,48 +2,60 @@
 {
     "use strict";
 
-    APP.TOOLS.Keyboard = APP.CORE.Event_Emitter.extend(
+    App.Tools.Keyboard = App.Core.Event_Emitter.extend(
     {
+        options :
+        {
+            keycode_names :
+            {
+                91 : 'cmd',
+                17 : 'ctrl',
+                32 : 'space',
+                16 : 'shift',
+                18 : 'alt',
+                20 : 'caps',
+                9  : 'tab',
+                13 : 'enter',
+                8  : 'backspace',
+                38 : 'top',
+                39 : 'right',
+                40 : 'bottom',
+                37 : 'left'
+            }
+        },
+
         /**
          * SINGLETON
          */
-        staticInstantiate:function()
+        staticInstantiate : function()
         {
-            if( APP.TOOLS.Keyboard.prototype.instance === null )
+            if( App.Tools.Keyboard.prototype.instance === null )
                 return null;
             else
-                return APP.TOOLS.Keyboard.prototype.instance;
+                return App.Tools.Keyboard.prototype.instance;
         },
 
         /**
          * INIT
          */
-        init: function( options )
+        init : function( options )
         {
             this._super( options );
 
-            this.ticker        = new APP.TOOLS.Ticker();
-            this.browser       = new APP.TOOLS.Browser();
-            this.shall_trigger = {};
-            this.downs         = [];
+            this.browser = new App.Tools.Browser();
+            this.downs   = [];
 
             this.init_events();
 
-            APP.TOOLS.Keyboard.prototype.instance = this;
+            App.Tools.Keyboard.prototype.instance = this;
         },
 
         /**
          * INIT EVENTS
          */
-        init_events: function()
+        init_events : function()
         {
             var that = this;
-
-            // Ticker
-            this.ticker.on( 'tick', function()
-            {
-                that.frame();
-            } );
 
             // Down
             window.onkeydown = function( e )
@@ -53,7 +65,9 @@
                 if( that.downs.indexOf( character ) === -1 )
                     that.downs.push( character );
 
-                that.shall_trigger.down = character;
+                // Trigger and prevend default if asked by return false on callback
+                if( that.trigger( 'down', [ e.keyCode, character ] ) === false )
+                    e.preventDefault();
             };
 
             // Up
@@ -64,34 +78,19 @@
                 if( that.downs.indexOf( character ) !== -1 )
                     that.downs.splice( that.downs.indexOf( character ), 1 );
 
-                that.shall_trigger.up = character;
+                that.trigger( 'up', [ e.keyCode, character ] );
             };
         },
 
         /**
          * KEYCODE TO CHAR
          */
-        keycode_to_character: function( keycode )
+        keycode_to_character : function( keycode )
         {
-            var character = null;
+            var character = this.options.keycode_names[ keycode ];
 
-            switch( keycode )
-            {
-                // CMD
-                case 91 :
-                    character = 'cmd';
-                    break;
-
-                // CTRL
-                case 17 :
-                    character = 'ctrl';
-                    break;
-
-                // Default
-                default :
-                    character = String.fromCharCode( keycode ).toLowerCase();
-                    break;
-            }
+            if( !character )
+                character = String.fromCharCode( keycode ).toLowerCase();
 
             return character;
         },
@@ -99,14 +98,18 @@
         /**
          * ARE DOWN
          */
-        are_down: function( keys )
+        are_down : function( keys )
         {
-            var down = !!keys.length;
+            var down = true;
 
             for( var i = 0; i < keys.length; i++ )
             {
-                // console.log(this.downs.indexOf( keys[ i ] ));
-                if( this.downs.indexOf( keys[ i ] ) === -1 )
+                var key = keys[ i ];
+
+                if( typeof key === 'number' )
+                    key = this.keycode_to_character( key );
+
+                if( this.downs.indexOf( key ) === -1 )
                     down = false;
             }
 
@@ -114,16 +117,11 @@
         },
 
         /**
-         * FRAME
+         * IS DOWN
          */
-        frame: function()
+        is_down : function( key )
         {
-            var keys = Object.keys(this.shall_trigger);
-            for( var i = 0; i < keys.length; i++ )
-                this.trigger( keys[ i ] , [ this.shall_trigger[ keys[ i ]  ] ] );
-
-            if( keys.length )
-                this.shall_trigger = {};
+            return this.are_down( [ key ] );
         }
-    });
-})();
+    } );
+} )();

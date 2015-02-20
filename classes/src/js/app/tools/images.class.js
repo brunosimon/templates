@@ -2,17 +2,17 @@
 {
     "use strict";
 
-    APP.TOOLS.Images = APP.CORE.Abstract.extend(
+    App.Tools.Images = App.Core.Abstract.extend(
     {
         /**
          * SINGLETON
          */
-        staticInstantiate:function()
+        staticInstantiate : function()
         {
-            if(APP.TOOLS.Images.prototype.instance === null)
+            if(App.Tools.Images.prototype.instance === null)
                 return null;
             else
-                return APP.TOOLS.Images.prototype.instance;
+                return App.Tools.Images.prototype.instance;
         },
 
         /**
@@ -20,7 +20,7 @@
          * @param  object options
          * @return Images
          */
-        init: function(options)
+        init : function(options)
         {
             this._super(options);
             this.urls    = [];
@@ -28,7 +28,7 @@
             this.length  = 0;
             this.loaded  = 0;
 
-            APP.TOOLS.Images.prototype.instance = this;
+            App.Tools.Images.prototype.instance = this;
         },
 
         /**
@@ -37,7 +37,7 @@
          * @param  {Function} callback [description]
          * @return {[type]}            [description]
          */
-        load: function(urls,callback)
+        load : function(urls,callback)
         {
             var that  = this;
 
@@ -70,7 +70,7 @@
         /**
          * ADD IMAGE URL TO LOAD
          */
-        add: function(urls)
+        add : function(urls)
         {
             if(typeof urls === 'string')
                 this.urls.push(urls);
@@ -82,7 +82,7 @@
          * GET COORDINATES AND SIZES
          * @param  object  parameters
          */
-        get_proportions: function(parameters)
+        get_proportions : function(parameters)
         {
             // Errors
             var errors = [];

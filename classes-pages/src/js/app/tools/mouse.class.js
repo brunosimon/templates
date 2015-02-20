@@ -58,7 +58,7 @@
                 e.preventDefault();
                 that.down = true;
 
-                that.shall_trigger.down = e.target;
+                that.shall_trigger.down = [ e.clientX, e.clientY, e.target ];
             };
 
             // Up
@@ -67,7 +67,7 @@
                 e.preventDefault();
                 that.down = false;
 
-                that.shall_trigger.up = e.target;
+                that.shall_trigger.up = [ e.clientX, e.clientY, e.target ];
             };
 
             // Move
@@ -80,7 +80,7 @@
                 that.ratio.x = that.x / that.browser.width;
                 that.ratio.y = that.y / that.browser.height;
 
-                that.shall_trigger.move = e.target;
+                that.shall_trigger.move = [ e.clientX, e.clientY, e.target ];
             };
 
             // Wheel
@@ -90,7 +90,7 @@
 
                 that.wheel.delta = e.wheelDeltaY || e.wheelDelta || - e.detail;
 
-                that.shall_trigger.wheel = that.wheel.delta;
+                that.shall_trigger.wheel = [ that.wheel.delta ];
 
                 return false;
             };
@@ -105,7 +105,7 @@
         {
             var keys = Object.keys(this.shall_trigger);
             for( var i = 0; i < keys.length; i++ )
-                this.trigger( keys[ i ] , [ this.shall_trigger[ keys[ i ]  ] ] );
+                this.trigger( keys[ i ], this.shall_trigger[ keys[ i ] ] );
 
             if( keys.length )
                 this.shall_trigger = {};

@@ -2,7 +2,7 @@
 {
     'use strict';
 
-    APP.CORE.App = APP.CORE.Abstract.extend(
+    App.Core.App = App.Core.Abstract.extend(
     {
         options:
         {
@@ -12,41 +12,55 @@
         /**
          * INIT
          */
-        init: function(options)
+        init : function( options )
         {
-            this._super(options);
+            this._super( options );
 
-            this.page    = null;
-            this.ticker  = new APP.TOOLS.Ticker();
-            this.browser = new APP.TOOLS.Browser({initial_triggers:['resize']});
-            this.css     = new APP.TOOLS.Css();
-            this.header  = new APP.COMPONENTS.Header();
+            this.ticker   = new App.Tools.Ticker();
+            this.browser  = new App.Tools.Browser();
+            this.css      = new App.Tools.Css();
+            this.keyboard = new App.Tools.Keyboard();
+            this.mouse    = new App.Tools.Mouse();
+            this.ga_tags  = new App.Tools.GA_Tags();
+            this.header   = new App.Components.Header();
 
-            this.browser.on('resize',function(width,height)
+            this.keyboard.on( 'down', function( keycode, character )
             {
-                console.log('resize : ' + width + ' x ' + height);
-            });
+                console.log( keycode );
+                console.log( character );
+            } );
 
-            this.browser.on('scroll',function(direction,top,left)
+            this.keyboard.on( 'up', function( keycode, character )
             {
-                console.log('scroll : ' + top + ' x ' + left);
-            });
+                console.log( keycode );
+                console.log( character );
+            } );
 
-            this.browser.on('mouse_move',function(mouse)
+            this.browser.on( 'resize', function( viewport )
             {
-                console.log('mouse_move : ' + mouse.x + ' : ' + mouse.y);
-            });
+                console.log( 'resize : ', viewport );
+            } );
+
+            this.browser.on( 'scroll', function( viewport )
+            {
+                console.log( 'scroll : ', viewport );
+            } );
+
+            this.mouse.on( 'down', function( position, target )
+            {
+                console.log( 'position : ', position.ratio );
+            } );
         },
 
         /**
          * START
          */
-        start: function()
+        start : function()
         {
             var that = this;
 
             this.browser.start();
-            this.ticker.start();
+            this.ticker.start( true );
         }
-    });
-})();
+    } );
+} )();

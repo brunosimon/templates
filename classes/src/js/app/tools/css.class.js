@@ -2,71 +2,78 @@
 {
     "use strict";
 
-    APP.TOOLS.Css = APP.CORE.Abstract.extend(
+    App.Tools.Css = App.Core.Abstract.extend(
     {
         /**
          * SINGLETON
          */
-        staticInstantiate:function()
+        staticInstantiate : function()
         {
-            if(APP.TOOLS.Css.prototype.instance === null)
+            if( App.Tools.Css.prototype.instance === null )
                 return null;
             else
-                return APP.TOOLS.Css.prototype.instance;
+                return App.Tools.Css.prototype.instance;
         },
 
         /**
          * INIT
-         * @param  object options
-         * @return Images
          */
-        init: function(options)
+        init : function( options )
         {
-            this._super(options);
+            this._super( options );
 
-            this.prefixes = ['webkit','moz','o','ms',''];
-            this.browser  = new APP.TOOLS.Browser();
+            this.prefixes = [ 'webkit', 'moz', 'o', 'ms', '' ];
+            this.browser  = new App.Tools.Browser();
 
-            APP.TOOLS.Css.prototype.instance = this;
+            App.Tools.Css.prototype.instance = this;
         },
 
-        apply: function($target,property,value)
+        /**
+         * AppLY
+         */
+        apply : function( $target, property, value )
         {
-            if(typeof property === 'undefined' || property === '')
-                console.warn('Wrong property');
-            if(typeof value === 'undefined' || value === '')
-                console.warn('Wrong value');
-            if(typeof $target === 'undefined' || !$target.length)
-                console.warn('Wrong target');
-
-            if(this.browser.is.IE && this.browser.version < 10)
-                value = value.replace('translateZ(0)','');
-
-            for(var css = {}, i = 0, len = this.prefixes.length; i < len; i++)
+            // Force array
+            if( typeof $target.length === 'undefined' )
             {
-                var updated_property = this.prefixes[i];
+                // console.log('ok');
+                $target = [ $target ];
+            }
 
-                if(updated_property !== '')
-                    updated_property += this.capitalize_first_letter(property);
+            // Remove translateZ if necessary
+            if( this.browser.is.IE && this.browser.version < 10 )
+                value = value.replace( 'translateZ(0)', '' );
+
+            // Add prefix
+            for( var css = {}, i = 0, i_len = this.prefixes.length; i < i_len; i++ )
+            {
+                var updated_property = this.prefixes[ i ];
+
+                if( updated_property !== '' )
+                    updated_property += this.capitalize_first_letter( property );
                 else
                     updated_property = property;
 
-                css[updated_property] = value;
+                css[ updated_property ] = value;
             }
 
-            $target.each(function()
+            // Apply each CSS on each element
+            var keys = Object.keys( css );
+            for( var j = 0, j_len = $target.length; j < j_len; j++ )
             {
-                var keys = Object.keys(css);
+                var element = $target[ j ];
 
-                for(var i = 0, len = keys.length; i < len; i++)
-                    this.style[keys[i]] = css[keys[i]];
-            });
-            // $target.css(css);
+                for( var k = 0, k_len = keys.length; k < k_len; k++ )
+                    element.style[ keys[ k ] ] = css[ keys[ k ] ];
+            }
         },
 
-        capitalize_first_letter: function(text)
+        /**
+         * CAPITALIZE FIRST LETTER
+         */
+        capitalize_first_letter : function( text )
         {
-            return text.charAt(0).toUpperCase() + text.slice(1);
+            return text.charAt( 0 ).toUpperCase() + text.slice( 1 );
         }
-    });
-})();
+    } );
+} )();

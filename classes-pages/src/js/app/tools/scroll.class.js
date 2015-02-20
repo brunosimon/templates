@@ -32,7 +32,7 @@
 
             this.tops    = [];
             this.browser = new APP.TOOLS.Browser();
-            this.$.body  = $('body');
+            this.$.body  = $( this.browser.is.FF ? 'html' : 'body');
 
             this.init_events();
 

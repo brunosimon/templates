@@ -2,27 +2,27 @@
 {
     'use strict';
 
-    APP.CORE.Abstract = Class.extend(
+    App.Core.Abstract = Class.extend(
     {
         options: {},
 
         /**
          * INIT
          */
-        init: function(options)
+        init : function( options )
         {
-            if(typeof options === 'undefined')
+            if( typeof options === 'undefined' )
                 options = {};
 
             this.$ = {};
 
-            this.options = merge(this.options,options);
+            this.options = merge( this.options,options );
         },
 
         /**
          * START
          */
-        start: function()
+        start : function()
         {
 
         },
@@ -30,7 +30,7 @@
         /**
          * IGNITE DAT FIRE!
          */
-        ignite: function()
+        ignite : function()
         {
             return this.start();
         },
@@ -38,9 +38,9 @@
         /**
          * DESTROY
          */
-        destroy: function()
+        destroy : function()
         {
 
         }
-    });
-})();
+    } );
+} )();

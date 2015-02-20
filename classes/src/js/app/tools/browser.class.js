@@ -2,126 +2,119 @@
 {
     "use strict";
 
-    APP.TOOLS.Browser = APP.CORE.Event_Emitter.extend(
+    App.Tools.Browser = App.Core.Event_Emitter.extend(
     {
         options:
         {
-            disable_hover_on_scroll : false,
-            disable_hover_on_scroll_duration : 300,
+            disable_hover_on_scroll : true,
             add_classes_to :
             [
                 'body'
-            ],
-            listen_to :
-            [
-                'resize',
-                'scroll'
             ]
         },
 
         /**
          * SINGLETON
          */
-        staticInstantiate:function()
+        staticInstantiate : function()
         {
-            if( APP.TOOLS.Browser.prototype.instance === null )
+            if( App.Tools.Browser.prototype.instance === null )
                 return null;
             else
-                return APP.TOOLS.Browser.prototype.instance;
+                return App.Tools.Browser.prototype.instance;
         },
 
         /**
          * INIT
          */
-        init: function( options )
+        init : function( options )
         {
             this._super( options );
 
-            this.ticker        = new APP.TOOLS.Ticker();
-            this.top           = 0;
-            this.left          = 0;
-            this.direction     = {};
-            this.direction.x   = null;
-            this.direction.y   = null;
-            this.mouse         = {};
-            this.mouse.x       = 0;
-            this.mouse.y       = 0;
-            this.mouse.ratio   = {};
-            this.mouse.ratio.x = 0;
-            this.mouse.ratio.y = 0;
-            this.is            = null;
-            this.version       = null;
-            this.mobile        = this.mobile_detection();
-            this.window        = $( window );
-            this.width         = this.window.width();
-            this.height        = this.window.height();
+            this.ticker = new App.Tools.Ticker();
+
+            this.viewport             = {};
+            this.viewport.top         = 0;
+            this.viewport.left        = 0;
+            this.viewport.y           = 0;
+            this.viewport.x           = 0;
+            this.viewport.delta       = {};
+            this.viewport.delta.top   = 0;
+            this.viewport.delta.left  = 0;
+            this.viewport.delta.y     = 0;
+            this.viewport.delta.x     = 0;
+            this.viewport.direction   = {};
+            this.viewport.direction.x = null;
+            this.viewport.direction.y = null;
+            this.viewport.width       = window.innerWidth;
+            this.viewport.height      = window.innerHeight;
+
+            this.is      = null;
+            this.version = null;
+            // this.mobile  = this.mobile_detection();
+
             this.pixel_ratio   = window.devicePixelRatio || 1;
             this.shall_trigger = {};
 
-            this.set_browser();
             this.set_browser_version();
-
-            this.listening_to        = {};
-            this.listening_to.resize = this.options.listen_to.indexOf('resize')     !== -1;
-            this.listening_to.scroll = this.options.listen_to.indexOf('scroll')     !== -1;
-
             this.init_events();
+            this.add_classes();
+            this.disable_hover_on_scroll();
 
-            if(this.options.add_classes_to.length)
-                this.add_classes();
-
-            if(this.options.disable_hover_on_scroll)
-                this.disable_hover_on_scroll();
-
-            APP.TOOLS.Browser.prototype.instance = this;
+            App.Tools.Browser.prototype.instance = this;
         },
 
         /**
          * START
          */
-        start: function()
+        start : function()
         {
-            if(this.listening_to.scroll)
-                this.window.trigger( 'scroll' );
-
-            if(this.listening_to.resize)
-                this.window.trigger( 'resize' );
+            this.scroll_handle();
+            this.resize_handle();
         },
 
         /**
          * DISABLE HOVER ON SCROLL
          * Huge gain in performance when scrolling
          */
-        disable_hover_on_scroll: function()
+        disable_hover_on_scroll : function()
         {
-            var that = this,
-                body = $( 'body' );
+            if( !this.options.disable_hover_on_scroll )
+                return;
 
-            this.body  = document.body;
-            this.timer = null;
+            var that    = this,
+                timeout = null,
+                active  = false;
 
-            var disable = function()
+            function disable()
             {
-                clearTimeout(that.timer);
-                if(!body.hasClass( 'disable-hover' ))
-                    body.addClass( 'disable-hover' );
+                // Clear timeout if exist
+                if( timeout )
+                    window.clearTimeout( timeout );
 
-                that.timer = setTimeout( function()
+                // Not active
+                if( !active )
                 {
-                    body.removeClass( 'disable-hover' );
-                }, that.options.disable_hover_on_scroll_duration );
-            };
+                    // Activate
+                    active = true;
+                    document.body.style.pointerEvents = 'none';
+                }
 
-            if( window.addEventListener )
-                window.addEventListener( 'scroll', disable, false );
-            else
-                window.attachEvent( 'scroll', disable, false );
+                timeout = window.setTimeout( function()
+                {
+                    // Deactivate
+                    active = false;
+                    document.body.style.pointerEvents = 'auto';
+                }, 60 );
+            }
+
+            this.on( 'scroll', disable );
         },
 
         /**
-         * GET BROWSER
+         * GET BROWSER VERSION
          */
-        set_browser: function()
+        set_browser_version : function()
         {
             var is    = {},
                 agent = navigator.userAgent.toLowerCase();
@@ -149,14 +142,7 @@
             is.IPAD = is.ipad;
 
             this.is = is;
-        },
 
-        /**
-         * GET BROWSER VERSION
-         * Actually only for IE
-         */
-        set_browser_version: function()
-        {
             this.version = false;
 
             if( this.is.IE )
@@ -169,44 +155,47 @@
             }
         },
 
-        /**
-         * GET MOBILE
-         */
-        mobile_detection : function()
-        {
-            var checker = {};
+        // /**
+        //  * GET MOBILE
+        //  */
+        // mobile_detection : function()
+        // {
+        //     var checker = {};
 
-            checker.iphone     = navigator.userAgent.match( /(iPhone|iPod|iPad)/ );
-            checker.blackberry = navigator.userAgent.match( /BlackBerry/ );
-            checker.android    = navigator.userAgent.match( /Android/ );
-            checker.opera      = navigator.userAgent.match( /Opera Mini/i );
-            checker.windows    = navigator.userAgent.match( /IEMobile/i );
-            checker.all        = ( checker.iphone || checker.blackberry || checker.android || checker.opera || checker.windows );
+        //     checker.iphone     = navigator.userAgent.match( /(iPhone|iPod|iPad)/ );
+        //     checker.blackberry = navigator.userAgent.match( /BlackBerry/ );
+        //     checker.android    = navigator.userAgent.match( /Android/ );
+        //     checker.opera      = navigator.userAgent.match( /Opera Mini/i );
+        //     checker.windows    = navigator.userAgent.match( /IEMobile/i );
+        //     checker.all        = ( checker.iphone || checker.blackberry || checker.android || checker.opera || checker.windows );
 
-            return checker;
-        },
+        //     return checker;
+        // },
 
         /**
          * ADD CLASSES
          * Add browser class to wanted elements like <body> or <html>
          */
-        add_classes: function()
+        add_classes : function()
         {
-            var target = null;
+            var targets = null;
             for( var i = 0, len = this.options.add_classes_to.length; i < len; i++ )
             {
-                target = $( this.options.add_classes_to[ i ] );
+                targets = document.querySelectorAll( this.options.add_classes_to[ i ] );
 
-                if( target.length )
+                if( targets.length )
                 {
                     for( var key in this.is )
                     {
                         if( this.is[ key ] )
                         {
-                            target.addClass( key );
-                            if( this.is.IE && this.version )
+                            for( var j = 0; j < targets.length; j++ )
                             {
-                                target.addClass( key + '-' + this.version );
+                                targets[ j ].classList.add( key );
+                                if( this.is.IE && this.version )
+                                {
+                                    targets[ j ].classList.add( key + '-' + this.version );
+                                }
                             }
                         }
                     }
@@ -218,7 +207,7 @@
          * INIT EVENTS
          * Start listening events
          */
-        init_events: function()
+        init_events : function()
         {
             var that = this;
 
@@ -228,67 +217,98 @@
                 that.frame();
             } );
 
-            // Scroll
-            if( this.listening_to.scroll )
-            {
-                this.window.on( 'scroll touchmove', function(e)
-                {
-                    // e = e || window.event;
-                    // if (e.preventDefault)
-                    //     e.preventDefault();
-                    // e.returnValue = false;
-
-                    if( that.is.IE && document.compatMode === 'CSS1Compat' )
-                    {
-                        that.direction.y = window.document.documentElement.scrollTop > that.top ? 'down' : 'up';
-                        that.direction.x = window.document.documentElement.scrollLeft > that.top ? 'right' : 'left';
-                        that.top         = window.document.documentElement.scrollTop;
-                        that.left        = window.document.documentElement.scrollLeft;
-                    }
-                    else
-                    {
-                        that.direction.y = window.pageYOffset > that.top ? 'down' : 'up';
-                        that.direction.x = window.pageXOffset > that.top ? 'right' : 'left';
-                        that.top         = window.pageYOffset;
-                        that.left        = window.pageXOffset;
-                    }
-
-                    that.shall_trigger.scroll = [ that.top, that.left ];
-                });
-            }
-
             // Resize
-            if( this.listening_to.resize )
+            window.onresize = function()
             {
-                this.window.on( 'resize', function(e)
-                {
-                    that.width  = window.innerWidth;
-                    that.height = window.innerHeight;
+                that.resize_handle();
+            };
 
-                    that.shall_trigger.resize = [ that.width, that.height ];
-                });
-            }
+            // Scroll
+            window.onscroll = function()
+            {
+                that.scroll_handle();
+            };
         },
 
-        match_media: function( condition )
+        /**
+         * RESIZE HANDLE
+         */
+        resize_handle : function()
+        {
+            this.viewport.width  = window.innerWidth;
+            this.viewport.height = window.innerHeight;
+
+            this.shall_trigger.resize = [ this.viewport ];
+        },
+
+        /**
+         * SCROLL HANDLE
+         */
+        scroll_handle : function()
+        {
+            // e = e || window.event;
+            // if (e.preventDefault)
+            //     e.preventDefault();
+            // e.returnValue = false;
+
+            var direction_y = null,
+                direction_x = null,
+                top         = null,
+                left        = null;
+
+            if( this.is.IE && document.compatMode === 'CSS1Compat' )
+            {
+                direction_y = window.document.documentElement.scrollTop  > this.viewport.top  ? 'down'  : 'up';
+                direction_x = window.document.documentElement.scrollLeft > this.viewport.left ? 'right' : 'left';
+                top         = window.document.documentElement.scrollTop;
+                left        = window.document.documentElement.scrollLeft;
+            }
+            else
+            {
+                direction_y = window.pageYOffset > this.viewport.top  ? 'down'  : 'up';
+                direction_x = window.pageXOffset > this.viewport.left ? 'right' : 'left';
+                top         = window.pageYOffset;
+                left        = window.pageXOffset;
+            }
+
+            this.viewport.direction.y = direction_y;
+            this.viewport.direction.x = direction_x;
+            this.viewport.delta.top   = top  - this.viewport.top;
+            this.viewport.delta.left  = left - this.viewport.left;
+            this.viewport.delta.y     = this.viewport.delta.top;
+            this.viewport.delta.x     = this.viewport.delta.left;
+            this.viewport.top         = top;
+            this.viewport.left        = left;
+            this.viewport.y           = this.viewport.top;
+            this.viewport.x           = this.viewport.left;
+
+            this.shall_trigger.scroll = [ this.viewport ];
+        },
+
+        /**
+         * MATH MEDIA
+         */
+        match_media : function( condition )
         {
             if( !( 'matchMedia' in window ) || typeof condition !== 'string' || condition === '' )
                 return false;
 
-            return !!window.matchMedia(condition).matches;
+            return !!window.matchMedia( condition ).matches;
         },
 
         /**
          * FRAME
          */
-        frame: function()
+        frame : function()
         {
-            var keys = Object.keys(this.shall_trigger);
+            var keys = Object.keys( this.shall_trigger );
+
+
             for( var i = 0; i < keys.length; i++ )
-                this.trigger( keys[ i ] , [ this.shall_trigger[ keys[ i ]  ] ] );
+                this.trigger( keys[ i ], this.shall_trigger[ keys[ i ] ] );
 
             if( keys.length )
                 this.shall_trigger = {};
         }
-    });
-})();
+    } );
+} )();

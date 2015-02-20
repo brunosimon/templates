@@ -2,113 +2,110 @@
 {
     "use strict";
 
-    APP.TOOLS.Mouse = APP.CORE.Event_Emitter.extend(
+    App.Tools.Mouse = App.Core.Event_Emitter.extend(
     {
         /**
          * SINGLETON
          */
-        staticInstantiate:function()
+        staticInstantiate : function()
         {
-            if( APP.TOOLS.Mouse.prototype.instance === null )
+            if( App.Tools.Mouse.prototype.instance === null )
                 return null;
             else
-                return APP.TOOLS.Mouse.prototype.instance;
+                return App.Tools.Mouse.prototype.instance;
         },
 
         /**
          * INIT
          */
-        init: function( options )
+        init : function( options )
         {
             this._super( options );
 
-            this.ticker        = new APP.TOOLS.Ticker();
-            this.browser       = new APP.TOOLS.Browser();
-            this.shall_trigger = {};
-            this.down          = false;
-            this.x             = 0;
-            this.y             = 0;
-            this.ratio         = {};
-            this.ratio.x       = 0;
-            this.ratio.y       = 0;
-            this.wheel         = {};
-            this.wheel.delta   = 0;
+            this.browser          = new App.Tools.Browser();
+            this.down             = false;
+            this.position         = {};
+            this.position.x       = 0;
+            this.position.y       = 0;
+            this.position.ratio   = {};
+            this.position.ratio.x = 0;
+            this.position.ratio.y = 0;
+            this.wheel            = {};
+            this.wheel.delta      = 0;
 
             this.init_events();
 
-            APP.TOOLS.Mouse.prototype.instance = this;
+            App.Tools.Mouse.prototype.instance = this;
         },
 
         /**
          * INIT EVENTS
          */
-        init_events: function()
+        init_events : function()
         {
             var that = this;
 
-            // Ticker
-            this.ticker.on( 'tick', function()
-            {
-                that.frame();
-            } );
-
             // Down
-            window.onmousedown = function( e )
+            function mouse_down_handle( e )
             {
-                e.preventDefault();
                 that.down = true;
 
-                that.shall_trigger.down = e.target;
-            };
+                if( that.trigger( 'down', [ that.position, e.target ] ) === false )
+                {
+                    console.log('prevented');
+                    e.preventDefault();
+                }
+            }
 
             // Up
-            window.onmouseup = function( e )
+            function mouse_up_handle( e )
             {
-                e.preventDefault();
                 that.down = false;
 
-                that.shall_trigger.up = e.target;
-            };
+                that.trigger( 'up', [ that.position, e.target ] );
+            }
 
             // Move
-            window.onmousemove = function( e )
+            function mouse_move_handle( e )
             {
-                e.preventDefault();
-                that.x = e.clientX;
-                that.y = e.clientY;
+                that.position.x = e.clientX;
+                that.position.y = e.clientY;
 
-                that.ratio.x = that.x / that.browser.width;
-                that.ratio.y = that.y / that.browser.height;
+                that.position.ratio.x = that.position.x / that.browser.viewport.width;
+                that.position.ratio.y = that.position.y / that.browser.viewport.height;
 
-                that.shall_trigger.move = e.target;
-            };
+                that.trigger( 'move', [ that.position, e.target ] );
+            }
 
             // Wheel
-            var mouse_wheel_handler = function( e )
+            function mouse_wheel_handle( e )
             {
-                e.preventDefault();
-
                 that.wheel.delta = e.wheelDeltaY || e.wheelDelta || - e.detail;
 
-                that.shall_trigger.wheel = that.wheel.delta;
+                if( that.trigger( 'wheel', [ that.wheel.delta ] ) === false )
+                {
+                    e.preventDefault();
+                    return false;
+                }
+            }
 
-                return false;
-            };
-            document.addEventListener( 'mousewheel' , mouse_wheel_handler, false );
-            document.addEventListener( 'DOMMouseScroll' , mouse_wheel_handler, false );
-        },
+            // Listen
+            if (document.addEventListener)
+            {
+                document.addEventListener( 'mousedown', mouse_down_handle, false );
+                document.addEventListener( 'mouseup', mouse_up_handle, false );
+                document.addEventListener( 'mousemove', mouse_move_handle, false );
+                document.addEventListener( 'mousewheel', mouse_wheel_handle, false );
+                document.addEventListener( 'DOMMouseScroll', mouse_wheel_handle, false );
+            }
+            else
+            {
+                document.attachEvent( 'onmousedown', mouse_down_handle, false );
+                document.attachEvent( 'onmouseup', mouse_up_handle, false );
+                document.attachEvent( 'onmousemove', mouse_move_handle, false );
+                document.attachEvent( 'onmousewheel', mouse_wheel_handle, false );
+            }
 
-        /**
-         * FRAME
-         */
-        frame: function()
-        {
-            var keys = Object.keys(this.shall_trigger);
-            for( var i = 0; i < keys.length; i++ )
-                this.trigger( keys[ i ] , [ this.shall_trigger[ keys[ i ]  ] ] );
-
-            if( keys.length )
-                this.shall_trigger = {};
         }
-    });
-})();
+    } );
+} )();
