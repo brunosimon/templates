@@ -1,4 +1,4 @@
-var App =
+var B =
 {
     Core       : {},
     Tools      : {},

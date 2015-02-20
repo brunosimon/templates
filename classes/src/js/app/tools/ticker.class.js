@@ -1,18 +1,23 @@
 (function()
 {
-    "use strict";
+    'use strict';
 
-    App.Tools.Ticker = App.Core.Event_Emitter.extend(
+    B.Tools.Ticker = B.Core.Event_Emitter.extend(
     {
-        /**
-         * SINGLETON
-         */
-        staticInstantiate : function()
+        options :
         {
-            if( App.Tools.Ticker.prototype.instance === null )
+            auto_run : true
+        },
+
+        /**
+         * STATIC INSTANTIATE (SINGLETON)
+         */
+        static_instantiate : function()
+        {
+            if( B.Tools.Ticker.prototype.instance === null )
                 return null;
             else
-                return App.Tools.Ticker.prototype.instance;
+                return B.Tools.Ticker.prototype.instance;
         },
 
         /**
@@ -20,30 +25,38 @@
          */
         init : function( options )
         {
-            this._super(options);
+            this._super( options );
 
-            this.started      = false;
-            this.running      = false;
-            this.start_time   = 0;
-            this.time         = 0;
-            this.elapsed_time = 0;
+            this.started                = false;
+            this.running                = false;
+            this.time                   = {};
+            this.time.start             = 0;
+            this.time.elapsed           = 0;
+            this.time.delta             = 0;
+            this.time.current           = 0;
+            this.do_next_actions        = {};
+            this.do_next_actions.before = [];
+            this.do_next_actions.after  = [];
 
-            App.Tools.Ticker.prototype.instance = this;
+            if( this.options.auto_run )
+                this.run();
+
+            B.Tools.Ticker.prototype.instance = this;
         },
 
         /**
          * START
          */
-        start : function(auto_run)
+        start : function( run )
         {
-            var that = this;
+            this.started = true;
 
-            this.started      = true;
-            this.start_time   = + ( new Date() );
-            this.time         = 0;
-            this.elapsed_time = 0;
+            this.time.start   = + ( new Date() );
+            this.time.current = this.time.start;
+            this.time.elapsed = 0;
+            this.time.delta   = 0;
 
-            if(auto_run)
+            if( run )
                 this.run();
         },
 
@@ -52,7 +65,12 @@
          */
         run : function()
         {
-            var that     = this;
+            var that = this;
+
+            // Already running
+            if( this.running )
+                return;
+
             this.running = true;
 
             var loop = function()
@@ -79,14 +97,46 @@
          */
         tick : function()
         {
-            if(!this.started)
+            if( !this.started )
                 this.start();
 
-            this.time         = + ( new Date() );
-            this.delta        = this.time - this.start_time - this.elapsed_time;
-            this.elapsed_time = this.time - this.start_time;
+            // Set time infos
+            this.time.current = + ( new Date() );
+            this.time.delta   = this.time.current - this.time.start - this.time.elapsed;
+            this.time.elapsed = this.time.current - this.time.start;
 
-            this.trigger( 'tick', [ this.elapsed_time, this.time, this.start_time ] );
+            var i   = 0,
+                len = this.do_next_actions.before.length;
+
+            // Do next (before trigger)
+            for( ; i < len; i++ )
+            {
+                this.do_next_actions.before[ i ].call( this, [ this.time ] );
+                this.do_next_actions.before.splice( i, 1 );
+            }
+
+            // Trigger
+            this.trigger( 'tick', [ this.time ] );
+
+            // Do next (after trigger)
+            i   = 0;
+            len = this.do_next_actions.after.length;
+            for( ; i < len; i++ )
+            {
+                this.do_next_actions.after[ i ].call( this, [ this.time ] );
+                this.do_next_actions.after.splice( i, 1 );
+            }
+        },
+
+        /**
+         * DO NEXT
+         */
+        do_next : function( action, before )
+        {
+            if( typeof action !== 'function' )
+                return false;
+
+            this.do_next_actions[ before ? 'before' : 'after' ].push( action );
         }
     });
 })();

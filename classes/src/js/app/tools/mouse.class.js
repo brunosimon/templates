@@ -1,18 +1,18 @@
 (function()
 {
-    "use strict";
+    'use strict';
 
-    App.Tools.Mouse = App.Core.Event_Emitter.extend(
+    B.Tools.Mouse = B.Core.Event_Emitter.extend(
     {
         /**
-         * SINGLETON
+         * STATIC INSTANTIATE (SINGLETON)
          */
-        staticInstantiate : function()
+        static_instantiate : function()
         {
-            if( App.Tools.Mouse.prototype.instance === null )
+            if( B.Tools.Mouse.prototype.instance === null )
                 return null;
             else
-                return App.Tools.Mouse.prototype.instance;
+                return B.Tools.Mouse.prototype.instance;
         },
 
         /**
@@ -22,7 +22,7 @@
         {
             this._super( options );
 
-            this.browser          = new App.Tools.Browser();
+            this.browser          = new B.Tools.Browser();
             this.down             = false;
             this.position         = {};
             this.position.x       = 0;
@@ -35,7 +35,7 @@
 
             this.init_events();
 
-            App.Tools.Mouse.prototype.instance = this;
+            B.Tools.Mouse.prototype.instance = this;
         },
 
         /**

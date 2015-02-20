@@ -1,27 +1,28 @@
 (function()
 {
-    "use strict";
+    'use strict';
 
-    App.Tools.Browser = App.Core.Event_Emitter.extend(
+    B.Tools.Browser = B.Core.Event_Emitter.extend(
     {
         options:
         {
             disable_hover_on_scroll : true,
-            add_classes_to :
+            initial_trigger : true,
+            add_classes_to  :
             [
                 'body'
             ]
         },
 
         /**
-         * SINGLETON
+         * STATIC INSTANTIATE (SINGLETON)
          */
-        staticInstantiate : function()
+        static_instantiate : function()
         {
-            if( App.Tools.Browser.prototype.instance === null )
+            if( B.Tools.Browser.prototype.instance === null )
                 return null;
             else
-                return App.Tools.Browser.prototype.instance;
+                return B.Tools.Browser.prototype.instance;
         },
 
         /**
@@ -29,9 +30,11 @@
          */
         init : function( options )
         {
+            var that = this;
+
             this._super( options );
 
-            this.ticker = new App.Tools.Ticker();
+            this.ticker = new B.Tools.Ticker();
 
             this.viewport             = {};
             this.viewport.top         = 0;
@@ -61,16 +64,19 @@
             this.add_classes();
             this.disable_hover_on_scroll();
 
-            App.Tools.Browser.prototype.instance = this;
-        },
+            // Initial trigger
+            if( this.options.initial_trigger )
+            {
+                // Do next frame
+                this.ticker.do_next( function()
+                {
+                    // Trigger scroll and resize
+                    that.scroll_handle();
+                    that.resize_handle();
+                } );
+            }
 
-        /**
-         * START
-         */
-        start : function()
-        {
-            this.scroll_handle();
-            this.resize_handle();
+            B.Tools.Browser.prototype.instance = this;
         },
 
         /**

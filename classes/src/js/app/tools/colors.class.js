@@ -1,8 +1,8 @@
 (function()
 {
-    "use strict";
+    'use strict';
 
-    App.Tools.Colors = App.Core.Abstract.extend(
+    B.Tools.Colors = B.Core.Abstract.extend(
     {
         options :
         {
@@ -154,14 +154,14 @@
         },
 
         /**
-         * SINGLETON
+         * STATIC INSTANTIATE (SINGLETON)
          */
-        staticInstantiate : function()
+        static_instantiate : function()
         {
-            if( App.Tools.Colors.prototype.instance === null )
+            if( B.Tools.Colors.prototype.instance === null )
                 return null;
             else
-                return App.Tools.Colors.prototype.instance;
+                return B.Tools.Colors.prototype.instance;
         },
 
         /**
@@ -169,9 +169,9 @@
          */
         init : function( options )
         {
-            this._super(options);
+            this._super( options );
 
-            App.Tools.Colors.prototype.instance = this;
+            B.Tools.Colors.prototype.instance = this;
         },
 
         /**

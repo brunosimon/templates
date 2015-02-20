@@ -3,19 +3,17 @@ TODO
 -------------------------------------------------------
 [ ] Create github repo
 [ ] Create doc
-[√] IE8 compatible
-[ ] Structure
-	[√] Move definition
-	[√] Better name space
-	[ ] Choose name instead of App (BApp ?)
-[ ] Deffered trigger
-[√] Separated polyfills
+[√] Structure
+	[√] Choose name instead of App (BApp ?)
 [ ] Classes (create)
 	[ ] Storyline
-	[√] Colors
 	[ ] Navigation
 	[ ] Page
 [ ] Classes (update)
+	[ ] Event_Emitter
+		[ ] Test flags
+		[ ] Test chars ( _, -, ...)
+		[ ] Deffered trigger
 	[ ] Browser
 		[ ] Mobile support
 		[ ] Tablet support
@@ -23,27 +21,23 @@ TODO
 			[ ] Firefox
 			[ ] Chrome
 			[ ] Safari
-	[ ] Ticker
-		[ ] Do next (kind of raf)
+	[√] Ticker
+		[√] Do next (kind of raf or set timeout with before and after the normal trigger)
+		[√] Auto run
 	[ ] GA Tags
-		[ ] "this" instead of "e.target"
+		[ ] Support ga (not _gaq)
 		[ ] Dynamically add GA script with method "init( ua_code )"
 			[ ] Trigger event
-		[ ] Parse method on specified container
-		[ ] Parsed class
-		[ ] Support ga (not _gaq)
-		[ ] data-tag-true-link "0" or "false"
+		[√] "this" instead of "e.target"
+		[√] Parse method on specified container
+		[√] Parsed class
+		[√] data-tag-true-link "0" or "false"
 	[ ] Images
 		[ ] Rename to dimensions/centring/scaling stuffs
 		[ ] Remove image references
 		[ ] Refactor
 	[ ] Keyboard
 		[ ] Qwerty compatible (switch)
-		[√] Prevent default
-		[√] are_down with number as input
-		[√] is_down
 	[ ] Mouse
-		[√] position property (return when trigger)
-		[√] Prevent default
 		[ ] Wheel type detection
 [ ] Comments everywhere !!!

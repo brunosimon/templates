@@ -1,18 +1,18 @@
 (function()
 {
-    "use strict";
+    'use strict';
 
-    App.Tools.Registry = App.Core.Abstract.extend(
+    B.Tools.Registry = B.Core.Abstract.extend(
     {
         /**
-         * SINGLETON
+         * STATIC INSTANTIATE (SINGLETON)
          */
-        staticInstantiate : function()
+        static_instantiate : function()
         {
-            if( App.Tools.Registry.prototype.instance === null )
+            if( B.Tools.Registry.prototype.instance === null )
                 return null;
             else
-                return App.Tools.Registry.prototype.instance;
+                return B.Tools.Registry.prototype.instance;
         },
 
         /**
@@ -24,7 +24,7 @@
 
             this.items = {};
 
-            App.Tools.Registry.prototype.instance = this;
+            B.Tools.Registry.prototype.instance = this;
         },
 
         /**

@@ -2,7 +2,7 @@
 {
     'use strict';
 
-    App.Components.Header = App.Core.Abstract.extend(
+    B.Components.Header = B.Core.Abstract.extend(
     {
         options :
         {

@@ -2,16 +2,16 @@
 {
     'use strict';
 
-    App.Core.Event_Emitter = App.Core.Abstract.extend(
+    B.Core.Event_Emitter = B.Core.Abstract.extend(
     {
         options: {},
 
         /**
          * INIT
          */
-        init : function(options)
+        init : function( options )
         {
-            this._super(options);
+            this._super( options );
 
             this.callbacks      = {};
             this.callbacks.base = {};
@@ -20,7 +20,7 @@
         /**
          * ON
          */
-        on : function(name,action)
+        on : function( name, action )
         {
             // Errors
             if( typeof name === 'undefined' || name === '' )

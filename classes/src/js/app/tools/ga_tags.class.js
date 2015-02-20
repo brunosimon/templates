@@ -1,16 +1,20 @@
 (function()
 {
-    "use strict";
+    'use strict';
 
-    App.Tools.GA_Tags = App.Core.Event_Emitter.extend(
+    B.Tools.GA_Tags = B.Core.Event_Emitter.extend(
     {
         options :
         {
             send               : true,
             parse              : true,
-            parse_selector     : '.tag',
             true_link_duration : 300,
-            logs               :
+            classes :
+            {
+                to_tag : 'tag',
+                tagged : 'tagged'
+            },
+            logs :
             {
                 warnings : true,
                 send     : true
@@ -18,14 +22,14 @@
         },
 
         /**
-         * SINGLETON
+         * STATIC INSTANTIATE (SINGLETON)
          */
-        staticInstantiate : function()
+        static_instantiate : function()
         {
-            if( App.Tools.GA_Tags.prototype.instance === null )
+            if( B.Tools.GA_Tags.prototype.instance === null )
                 return null;
             else
-                return App.Tools.GA_Tags.prototype.instance;
+                return B.Tools.GA_Tags.prototype.instance;
         },
 
         /**
@@ -40,23 +44,31 @@
             if( this.options.parse )
                 this.parse();
 
-            App.Tools.GA_Tags.prototype.instance = this;
+            B.Tools.GA_Tags.prototype.instance = this;
         },
 
         /**
          * START
          */
-        parse : function()
+        parse : function( container )
         {
+            container = container || document;
+
             var that     = this,
-                elements = document.querySelectorAll( this.options.parse_selector );
+                elements = container.querySelectorAll( '.' + this.options.classes.to_tag + ':not(' + this.options.classes.tagged + ')' );
 
             function click_handle( e )
             {
                 // Set variables
-                var element   = e.target,
+                var element   = this,
                     true_link = element.getAttribute( 'data-tag-true-link' ),
                     datas     = {};
+
+                // True link interpretation
+                if( [ '0', 'false', 'nop', 'no' ].indexOf( true_link ) !== -1 )
+                    true_link = false;
+                else
+                    true_link = true;
 
                 // Set options that will be sent
                 datas.category = element.getAttribute( 'data-tag-category' );
@@ -97,7 +109,15 @@
 
             // Listen
             for( var i = 0, len = elements.length; i < len; i++ )
-                elements[ i ].onclick = click_handle;
+            {
+                var element = elements[ i ];
+
+                // Listen
+                element.onclick = click_handle;
+
+                // Set tagged class
+                element.classList.add( this.options.classes.tagged );
+            }
         },
 
         /**
@@ -105,8 +125,7 @@
          */
         send : function( options )
         {
-            // Err
-                        // Listenor
+            // Error
             if( typeof options !== 'object' )
             {
                 // Logs

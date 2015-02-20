@@ -2,7 +2,7 @@
 {
     'use strict';
 
-    App.Core.Abstract = Class.extend(
+    B.Core.Abstract = Class.extend(
     {
         options: {},
 

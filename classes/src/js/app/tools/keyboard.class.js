@@ -1,8 +1,8 @@
 (function()
 {
-    "use strict";
+    'use strict';
 
-    App.Tools.Keyboard = App.Core.Event_Emitter.extend(
+    B.Tools.Keyboard = B.Core.Event_Emitter.extend(
     {
         options :
         {
@@ -25,14 +25,14 @@
         },
 
         /**
-         * SINGLETON
+         * STATIC INSTANTIATE (SINGLETON)
          */
-        staticInstantiate : function()
+        static_instantiate : function()
         {
-            if( App.Tools.Keyboard.prototype.instance === null )
+            if( B.Tools.Keyboard.prototype.instance === null )
                 return null;
             else
-                return App.Tools.Keyboard.prototype.instance;
+                return B.Tools.Keyboard.prototype.instance;
         },
 
         /**
@@ -42,12 +42,12 @@
         {
             this._super( options );
 
-            this.browser = new App.Tools.Browser();
+            this.browser = new B.Tools.Browser();
             this.downs   = [];
 
             this.init_events();
 
-            App.Tools.Keyboard.prototype.instance = this;
+            B.Tools.Keyboard.prototype.instance = this;
         },
 
         /**

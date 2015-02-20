@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Template - Classes</title>
+    <title>Burno.js</title>
 </head>
 <body>
 
     <form action="">
         <input type="text" name="test">
     </form>
-    <a class="tag" data-tag-true-link="0" href="#">test</a>
+    <a class="tag" data-tag-true-link="true" href="#">test <span>test</span></a>
     <br>test
     <br>test
     <br>test
@@ -119,12 +119,12 @@
     <script src="src/js/libs/class.js"></script>
 
     <!-- CORE -->
-    <script src="src/js/app/structure.js"></script>
+    <script src="src/js/app/core/b.class.js"></script>
     <script src="src/js/app/core/abstract.class.js"></script>
     <script src="src/js/app/core/event_emitter.class.js"></script>
-    <script src="src/js/app/core/app.class.js"></script>
 
     <!-- COMPONENTS -->
+    <script src="src/js/app/components/app.class.js"></script>
     <script src="src/js/app/components/header.class.js"></script>
 
     <!-- TOOLS -->
@@ -138,8 +138,7 @@
     <script src="src/js/app/tools/colors.class.js"></script>
 
     <script>
-        var app = new App.Core.App();
-        app.start();
+        var app = new B.Components.App();
     </script>
 </body>
 </html>

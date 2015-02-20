@@ -1,18 +1,18 @@
 (function()
 {
-    "use strict";
+    'use strict';
 
-    App.Tools.Images = App.Core.Abstract.extend(
+    B.Tools.Images = B.Core.Abstract.extend(
     {
         /**
-         * SINGLETON
+         * STATIC INSTANTIATE (SINGLETON)
          */
-        staticInstantiate : function()
+        static_instantiate : function()
         {
-            if(App.Tools.Images.prototype.instance === null)
+            if(B.Tools.Images.prototype.instance === null)
                 return null;
             else
-                return App.Tools.Images.prototype.instance;
+                return B.Tools.Images.prototype.instance;
         },
 
         /**
@@ -20,15 +20,15 @@
          * @param  object options
          * @return Images
          */
-        init : function(options)
+        init : function( options )
         {
-            this._super(options);
+            this._super( options );
             this.urls    = [];
             this.images  = [];
             this.length  = 0;
             this.loaded  = 0;
 
-            App.Tools.Images.prototype.instance = this;
+            B.Tools.Images.prototype.instance = this;
         },
 
         /**

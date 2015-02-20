@@ -120,9 +120,9 @@
         function Class() {
             if(!initializing)
             {
-                if(this.staticInstantiate)
+                if(this.static_instantiate)
                 {
-                    var obj = this.staticInstantiate.apply(this, arguments);
+                    var obj = this.static_instantiate.apply(this, arguments);
                     if (obj)
                     {
                         return obj;

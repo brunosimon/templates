@@ -1,18 +1,18 @@
 (function()
 {
-    "use strict";
+    'use strict';
 
-    App.Tools.Css = App.Core.Abstract.extend(
+    B.Tools.Css = B.Core.Abstract.extend(
     {
         /**
-         * SINGLETON
+         * STATIC INSTANTIATE (SINGLETON)
          */
-        staticInstantiate : function()
+        static_instantiate : function()
         {
-            if( App.Tools.Css.prototype.instance === null )
+            if( B.Tools.Css.prototype.instance === null )
                 return null;
             else
-                return App.Tools.Css.prototype.instance;
+                return B.Tools.Css.prototype.instance;
         },
 
         /**
@@ -23,9 +23,9 @@
             this._super( options );
 
             this.prefixes = [ 'webkit', 'moz', 'o', 'ms', '' ];
-            this.browser  = new App.Tools.Browser();
+            this.browser  = new B.Tools.Browser();
 
-            App.Tools.Css.prototype.instance = this;
+            B.Tools.Css.prototype.instance = this;
         },
 
         /**
